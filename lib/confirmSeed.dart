@@ -31,8 +31,8 @@ class _ConfirmSeedState extends State<ConfirmSeed> {
               ],
             ),
           ),
-          Column(
-            children: [
+          Expanded(
+            child: 
               Container(
                 child: Column(
                   children: [
@@ -58,11 +58,12 @@ class _ConfirmSeedState extends State<ConfirmSeed> {
                       ),
                     ),
                     SizedBox(height: 10,),
-                    Row()
+                    
+                    
                   ],
                 ),
               ),
-            ],
+            
           ),
         ],
       )),
