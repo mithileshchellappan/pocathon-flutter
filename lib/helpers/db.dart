@@ -29,6 +29,7 @@ class DB{
     firestore.collection('users').doc(userProvider.currentUser.username).set({
       'isVerified':false,
       'username':userProvider.currentUser.username,
+      'got_seed':false
     });
     firestore.collection('unsignedVC').doc(userProvider.currentUser.username).set({
       'username':userProvider.currentUser.username,
@@ -37,6 +38,7 @@ class DB{
       'aadhar_image':dl2.first,
       'ip':ip
     });
+    
   }
-
+  
 }

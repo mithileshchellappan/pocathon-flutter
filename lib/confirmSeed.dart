@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dummy.dart';
 import 'voteDashboard.dart';
 
 class ConfirmSeed extends StatefulWidget {
   final List<String> phrases;
-
-  const ConfirmSeed({Key key, @required this.phrases}) : super(key: key);
+  final String phrase;
+  const ConfirmSeed({Key key, @required this.phrases,@required this.phrase}) : super(key: key);
   @override
   _ConfirmSeedState createState() => _ConfirmSeedState();
 }
@@ -101,7 +102,9 @@ class _ConfirmSeedState extends State<ConfirmSeed> {
                               width: 200,
                               height: 40,
                               child: InkWell(
-                                  onTap: eq(checkStr,widget.phrases)?() {
+                                  onTap: eq(checkStr,widget.phrases)?()async {
+                                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                                    await prefs.setString('phrase', widget.phrase);
                                     Navigator.push(context, MaterialPageRoute(builder: (context)=>Dummy()));
                                   }:null,
                                   child: Center(

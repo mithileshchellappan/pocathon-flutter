@@ -2,6 +2,7 @@ import 'package:auto_animated/auto_animated.dart';
 import 'package:circular_countdown/circular_countdown.dart';
 import 'package:flutter/material.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:votefromhome/confirmVote.dart';
 import 'package:votefromhome/consts/participants.dart';
 
 class Dummy extends StatefulWidget {
@@ -18,8 +19,6 @@ class _DummyState extends State<Dummy> {
       new RoundedLoadingButtonController();
   var scrollDirection = Axis.horizontal;
   var actionIcon = Icons.swap_vert;
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -163,12 +162,11 @@ class AnimateIfVisibleExample extends StatelessWidget {
                       width: double.infinity,
                       height: 250,
                       child: HorizontalItem(
-                        title: '$i',
-                        partyImage: participants[i]['party-image'],
-                        image: participants[i]['image'],
-                        name:participants[i]['name'],
-                        party:participants[i]['party']
-                      ),
+                          title: '$i',
+                          partyImage: participants[i]['party-image'],
+                          image: participants[i]['image'],
+                          name: participants[i]['name'],
+                          party: participants[i]['party']),
                     ),
                     xOffset: i.isEven ? 0.15 : -0.15,
                     padding: EdgeInsets.all(16),
@@ -219,7 +217,7 @@ class HorizontalItem extends StatelessWidget {
     Key key,
   }) : super(key: key);
 
-  final String title, name,image,partyImage,party;
+  final String title, name, image, partyImage, party;
 
   @override
   Widget build(BuildContext context) => Material(
@@ -246,7 +244,7 @@ class HorizontalItem extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width:10),
+                        SizedBox(width: 10),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: CircleAvatar(
@@ -278,7 +276,6 @@ class HorizontalItem extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          
                           Material(
                             borderRadius: BorderRadius.circular(20),
                             clipBehavior: Clip.antiAlias,
@@ -291,7 +288,14 @@ class HorizontalItem extends StatelessWidget {
                               height: 40,
                               child: InkWell(
                                   onTap: () {
-                                    
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ConfirmVote(
+                                                canName: name,
+                                                partyName: party,
+                                                partyPhoto: partyImage,
+                                                canPhoto: image)));
                                   },
                                   child: Center(
                                       child: Text("VOTE",

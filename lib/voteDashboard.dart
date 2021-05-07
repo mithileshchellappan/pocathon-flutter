@@ -87,7 +87,7 @@ class _VoteDashboardState extends State<VoteDashboard> {
                               height: 40,
                               child: InkWell(
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ConfirmSeed(phrases: seedPhrases,)));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ConfirmSeed(phrases: seedPhrases,phrase:phrase)));
                                   },
                                   child: Center(
                                       child: Text("Continue",
