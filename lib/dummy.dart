@@ -290,7 +290,9 @@ class HorizontalItem extends StatelessWidget {
                               width: 200,
                               height: 40,
                               child: InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    
+                                  },
                                   child: Center(
                                       child: Text("VOTE",
                                           style: TextStyle(

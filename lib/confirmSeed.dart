@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'dummy.dart';
+import 'voteDashboard.dart';
 
 class ConfirmSeed extends StatefulWidget {
   final List<String> phrases;
@@ -20,9 +24,11 @@ class _ConfirmSeedState extends State<ConfirmSeed> {
     chipProps = List.generate(widget.phrases.length,
         (index) => {"label": widget.phrases[index], "isSelected": false});
   }
-
+  Function eq = const ListEquality().equals;
   @override
   Widget build(BuildContext context) {
+    print(widget.phrases);
+    print(eq(checkStr,widget.phrases));
     return SafeArea(
       child: Scaffold(
           body: Column(
@@ -83,6 +89,29 @@ class _ConfirmSeedState extends State<ConfirmSeed> {
                           widget.phrases.length,
                           (index) => chipDesign(widget.phrases[index], index,
                               Color(0xFFF383638)))),
+                          SizedBox(height:30),
+                          Material(
+                            borderRadius: BorderRadius.circular(20),
+                            clipBehavior: Clip.antiAlias,
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: eq(checkStr,widget.phrases)?Color(0xFFF0055a3):Colors.grey,
+                              ),
+                              width: 200,
+                              height: 40,
+                              child: InkWell(
+                                  onTap: eq(checkStr,widget.phrases)?() {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>Dummy()));
+                                  }:null,
+                                  child: Center(
+                                      child: Text("Confirm Seed Phrase",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17,
+                                              color: Colors.white)))),
+                            ),
+                          )
                 ],
               ),
             ),
@@ -114,6 +143,9 @@ class _ConfirmSeedState extends State<ConfirmSeed> {
                 ),
                 margin: EdgeInsets.only(left: 12, right: 12, top: 2, bottom: 2),
               ));
+            }else{
+              tappedChips.removeAt(index);
+              chipProps[index]["isSelected"]=false;
             }
           });
         },
