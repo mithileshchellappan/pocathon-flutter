@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmVote extends StatefulWidget {
@@ -17,7 +18,7 @@ class ConfirmVote extends StatefulWidget {
 String enteredPhrase = '';
 String phrase;
 TextEditingController controller;
-
+RoundedLoadingButtonController btnController;
 class _ConfirmVoteState extends State<ConfirmVote> {
   @override
   void initState() {
@@ -102,7 +103,29 @@ class _ConfirmVoteState extends State<ConfirmVote> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           SizedBox(height: 37),
           buildTextField(),
-          Container(height:10,width:10,color:phrase==enteredPhrase?Colors.red:Colors.blue)
+          SizedBox(height:20),
+           Material(
+                            borderRadius: BorderRadius.circular(20),
+                            clipBehavior: Clip.antiAlias,
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: enteredPhrase==phrase?Color(0xFFF0055a3):Colors.grey,
+                              ),
+                              width: 200,
+                              height: 40,
+                              child: InkWell(
+                                  onTap: enteredPhrase==phrase?() {
+                                    
+                                  }:null,
+                                  child: Center(
+                                      child: Text("Vote",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17,
+                                              color: Colors.white)))),
+                            ),
+                          )
         ],
       ),
     );
