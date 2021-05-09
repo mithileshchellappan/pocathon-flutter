@@ -30,7 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       isEqualTo: userProvider.currentUser.username)
                   .get(),
               builder: (context, snapshot) {
+                
                 switch (snapshot.connectionState) {
+                  
                   case ConnectionState.waiting:
                     return Center(child: CircularProgressIndicator());
                   case ConnectionState.done:

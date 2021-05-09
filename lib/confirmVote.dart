@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:votefromhome/loginScreen.dart';
 
 class ConfirmVote extends StatefulWidget {
   final String canName, partyName, partyPhoto, canPhoto;
@@ -15,10 +18,12 @@ class ConfirmVote extends StatefulWidget {
   @override
   _ConfirmVoteState createState() => _ConfirmVoteState();
 }
+
 String enteredPhrase = '';
 String phrase;
 TextEditingController controller;
 RoundedLoadingButtonController btnController;
+
 class _ConfirmVoteState extends State<ConfirmVote> {
   @override
   void initState() {
@@ -46,8 +51,9 @@ class _ConfirmVoteState extends State<ConfirmVote> {
   }
 
   Widget body(BuildContext context, String phrase) {
+    print(phrase);
     return SingleChildScrollView(
-          child: Column(
+      child: Column(
         children: [
           Container(
             color: Color(0xFF0059a4),
@@ -66,7 +72,6 @@ class _ConfirmVoteState extends State<ConfirmVote> {
           SizedBox(
             height: 30,
           ),
-
           Text('You are voting for:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
@@ -103,29 +108,69 @@ class _ConfirmVoteState extends State<ConfirmVote> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           SizedBox(height: 37),
           buildTextField(),
-          SizedBox(height:20),
-           Material(
-                            borderRadius: BorderRadius.circular(20),
-                            clipBehavior: Clip.antiAlias,
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: enteredPhrase==phrase?Color(0xFFF0055a3):Colors.grey,
-                              ),
-                              width: 200,
-                              height: 40,
-                              child: InkWell(
-                                  onTap: enteredPhrase==phrase?() {
-                                    
-                                  }:null,
-                                  child: Center(
-                                      child: Text("Vote",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 17,
-                                              color: Colors.white)))),
-                            ),
-                          )
+          SizedBox(height: 20),
+          Material(
+            borderRadius: BorderRadius.circular(20),
+            clipBehavior: Clip.antiAlias,
+            child: Ink(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color:
+                    enteredPhrase == phrase ? Color(0xFFF0055a3) : Colors.grey,
+              ),
+              width: 200,
+              height: 40,
+              child: InkWell(
+                  onTap: enteredPhrase == phrase
+                      ? () {
+                          Alert(
+                              title: '',
+                              onWillPopActive: true,
+                              buttons: [
+                                
+                              ],
+                              context: context,
+                              content: FutureBuilder(
+                                  future: Future.delayed(Duration(seconds: 5)),
+                                  builder: (context, snapshot) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.waiting:
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      case ConnectionState.done:
+                                        return Center(
+                                            child: Column(
+                                          children: [
+                                            Lottie.asset(
+                                                'assets/images/done.json'),
+                                            SizedBox(height: 5),
+                                            Text('Successfully voted'),
+                                            ElevatedButton(
+                                    child: Text('Close'),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  LoginScreen()));
+                                    })
+                                          ],
+                                        ));
+                                      default:
+                                        return Text('OOps');
+                                    }
+                                  })).show();
+                        }
+                      : null,
+                  child: Center(
+                      child: Text("Vote",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                              color: Colors.white)))),
+            ),
+          )
         ],
       ),
     );
@@ -144,7 +189,7 @@ class _ConfirmVoteState extends State<ConfirmVote> {
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
               maxLines: 2,
-              onChanged: (val){
+              onChanged: (val) {
                 setState(() {
                   enteredPhrase = val;
                 });
