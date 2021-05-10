@@ -1,44 +1,39 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:supabase/supabase.dart';
 import 'package:votefromhome/providers/userProvider.dart';
 
-class DB{
-  FirebaseStorage _storage = FirebaseStorage.instance;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  Future<void>  addImages(UserProvider userProvider,File img1,File img2,var ip) async {
-    await _firebaseAuth.signInAnonymously();
-    Reference reference = _storage.ref().child('aadhar-img').child(userProvider.currentUser.username+DateTime.now().toString());
-    Reference reference2 = _storage.ref().child('aadhar-holding').child(userProvider.currentUser.username+DateTime.now().toString());
-    UploadTask up1 = reference.putFile(img1);
-    UploadTask up2 = reference2.putFile(img2);
-    Set<String> dl1 = await up1.then((res)async=>{await res.ref.getDownloadURL()});
-    Set<String> dl2 = await up2.then((res) async => {await res.ref.getDownloadURL()});
-    var res = await Dio().post('https://votefromhome.herokuapp.com/api/createVC',data: {
-      'did':userProvider.currentUser.did,
-      'username':userProvider.currentUser.username
-    });
-    
-    print(dl1.first);
-    print(res.data['unsignedVC']);
-    firestore.collection('users').doc(userProvider.currentUser.username).set({
-      'isVerified':false,
-      'username':userProvider.currentUser.username,
-      'got_seed':false
-    });
-    firestore.collection('unsignedVC').doc(userProvider.currentUser.username).set({
-      'username':userProvider.currentUser.username,
-      'unverified_vc': res.data['unsignedVC'],
-      'user_image':dl1.first,
-      'aadhar_image':dl2.first,
-      'ip':ip
-    });
-    
-  }
+class DB {
   
+  final client = SupabaseClient('https://159.138.49.122:3000',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMDI5MjE2MywiZXhwIjoxOTM1ODY4MTYzfQ.0PsatQBg8KDw9gcHM7XTIWdLuQ2TVCsCBi1sP6O6fCQ');
+  Future<void> addImages(
+      UserProvider userProvider, File img1, File img2, var ip) async {
+    var res = await Dio()
+        .post('https://votefromhome.herokuapp.com/api/createVC', data: {
+      'did': userProvider.currentUser.did,
+      'username': userProvider.currentUser.username
+    });
+    final storageRes = await client.storage
+        .from(userProvider.currentUser.username)
+        .upload('${userProvider.currentUser.username}-aadhar.jpg', img1);
+    final storageRes2 = await client.storage
+        .from(userProvider.currentUser.username)
+        .upload('${userProvider.currentUser.username}-user.jpg', img2);
+
+    final response = await client.from('users').insert({
+      'isVerified': false,
+      'username': userProvider.currentUser.username,
+      'got_seed': false
+    });
+    final response2 = await client.from('unsignedVC').insert({
+      'username': userProvider.currentUser.username,
+      'unverified_vc': res.data['unsignedVC'],
+      'user_image': storageRes,
+      'aadhar_image': storageRes2,
+      'ip': ip
+    });
+  }
 }

@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase/supabase.dart' as sp;
 import 'package:votefromhome/notVerified.dart';
 import 'package:votefromhome/providers/userProvider.dart';
 import 'package:votefromhome/registerVC.dart';
@@ -12,27 +12,29 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
+final client = sp.SupabaseClient('https://159.138.49.122:3000',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMDI5MjE2MywiZXhwIjoxOTM1ODY4MTYzfQ.0PsatQBg8KDw9gcHM7XTIWdLuQ2TVCsCBi1sP6O6fCQ');
+
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: true);
-    // print(userProvider.currentUser.username);
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-
+    final subscription =
+        client.from('users').on(sp.SupabaseEventTypes.all, (x) {
+    }).subscribe((String event, {String errorMsg}) {
+    });
     return Scaffold(
         body: SafeArea(
       child: Scaffold(
           backgroundColor: Color(0xFFF0F0EF),
           body: FutureBuilder(
-              future: users
-                  .where('username',
-                      isEqualTo: userProvider.currentUser.username)
-                  .get(),
+              future: client
+                  .from('users')
+                  .select(userProvider.currentUser.username)
+                  .execute(),
               builder: (context, snapshot) {
-                
                 switch (snapshot.connectionState) {
-                  
                   case ConnectionState.waiting:
                     return Center(child: CircularProgressIndicator());
                   case ConnectionState.done:
@@ -71,7 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-                'Please note that your current IP and location will be noted and you can vote only when you are connected to the same network and if you are within 50 meter radius of you current location.\n Please make arrangements according that and proceed to apply for registration ',style:TextStyle(fontSize: 16)),
+                'Please note that your current IP and location will be noted and you can vote only when you are connected to the same network and if you are within 50 meter radius of you current location.\n Please make arrangements according that and proceed to apply for registration ',
+                style: TextStyle(fontSize: 16)),
           ),
           OutlinedButton(
             onPressed: () {

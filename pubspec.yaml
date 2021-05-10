@@ -37,9 +37,6 @@ dependencies:
   lottie:
   provider: ^5.0.0
   http:
-  firebase_core: ^1.0.4
-  firebase_storage: ^8.0.4
-  firebase_auth: ^1.1.0
   cloud_firestore: ^1.0.6
   dotted_border: ^2.0.0
   platform_action_sheet: ^0.0.3
@@ -53,6 +50,7 @@ dependencies:
   bip39: ^1.0.6
   google_fonts: ^2.0.0
   shared_preferences: ^2.0.5
+  supabase: ^0.0.1-dev.14
 dev_dependencies:
   flutter_test:
     sdk: flutter
